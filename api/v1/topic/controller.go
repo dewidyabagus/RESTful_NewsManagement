@@ -1,6 +1,7 @@
 package topic
 
 import (
+	"github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
 
 	"RESTful/api/common"
@@ -38,4 +39,52 @@ func (c *Controller) FindAllTopic(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(common.SuccessResponseWithData(response.GetAllTopic(topics)))
+}
+
+func (c *Controller) FindTopicById(ctx echo.Context) error {
+	id := ctx.Param("id")
+
+	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	topic, err := c.service.FindTopicById(&id)
+	if err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithData(response.GetOneTopic(topic)))
+}
+
+func (c *Controller) UpdateTopic(ctx echo.Context) error {
+	id := ctx.Param("id")
+
+	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	var topic = new(request.Topic)
+	if err := ctx.Bind(topic); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if err := c.service.UpdateTopic(&id, topic.ToBusinessTopicSpec()); err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithoutData())
+}
+
+func (c *Controller) DeleteTopic(ctx echo.Context) error {
+	id := ctx.Param("id")
+
+	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if err := c.service.DeleteTopic(&id); err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithoutData())
 }

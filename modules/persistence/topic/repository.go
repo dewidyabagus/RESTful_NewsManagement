@@ -74,13 +74,40 @@ func (r *Repository) FindTopicByName(name *string) (*topic.Topic, error) {
 	return data.toBusinessTopic(), nil
 }
 
+func (r *Repository) FindTopicById(id *string) (*topic.Topic, error) {
+	var data = new(Topic)
+
+	err := r.DB.First(data, "id = ? and (to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null)", id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, business.ErrDataNotFound
+		}
+		return nil, err
+	}
+
+	return data.toBusinessTopic(), nil
+}
+
 func (r *Repository) FindAllTopic() (*[]topic.Topic, error) {
 	var data = new([]Topic)
 
-	err := r.DB.Find(data).Where("to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null").Order("name asc").Error
+	err := r.DB.Where("to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null").Find(data).Order("name asc").Error
 	if err != nil {
 		return nil, err
 	}
 
 	return toAllBusinessTopic(data), nil
+}
+
+func (r *Repository) UpdateTopic(id *string, data *topic.Topic) error {
+	return r.DB.Model(&Topic{}).Where("id = ?", id).Updates(Topic{
+		Name:        data.Name,
+		Description: data.Description,
+		UpdatedAt:   data.UpdatedAt,
+	}).Error
+
+}
+
+func (r *Repository) DeleteTopic(id *string, deleter time.Time) error {
+	return r.DB.Model(&Topic{}).Where("id = ?", id).Update("deleted_at", deleter).Error
 }

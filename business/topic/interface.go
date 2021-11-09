@@ -1,20 +1,22 @@
 package topic
 
+import "time"
+
 type Service interface {
 	// Insert new topic
 	InsertTopic(topic *TopicSpec) error
 
 	// Find topic by id (uuid)
-	// FindTopicById(id *string) (*Topic, error)
+	FindTopicById(id *string) (*Topic, error)
 
 	// Find all topic
 	FindAllTopic() (*[]Topic, error)
 
 	// Update topic information
-	// UpdateTopic(id *string, topic *TopicSpec) error
+	UpdateTopic(id *string, topic *TopicSpec) error
 
 	// Delete topic with soft delete
-	// DeleteTopic(id *string) error
+	DeleteTopic(id *string) error
 }
 
 type Repository interface {
@@ -25,14 +27,14 @@ type Repository interface {
 	FindTopicByName(name *string) (*Topic, error)
 
 	// Find topic by id (uuid)
-	// FindTopicById(id *string) (*Topic, error)
+	FindTopicById(id *string) (*Topic, error)
 
 	// Find all topic
 	FindAllTopic() (*[]Topic, error)
 
 	// Update topic information
-	// UpdateTopic(id *string, topic *Topic) error
+	UpdateTopic(id *string, topic *Topic) error
 
 	// Deleted topic with soft delete
-	// DeleteTopic(id *string) error
+	DeleteTopic(id *string, deleter time.Time) error
 }

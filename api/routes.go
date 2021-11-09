@@ -14,4 +14,7 @@ func RegisterRouters(e *echo.Echo, topic *topic.Controller) {
 	topicGroup := e.Group("/v1/topics")
 	topicGroup.POST("", topic.InsertTopic)
 	topicGroup.GET("", topic.FindAllTopic)
+	topicGroup.GET("/:id", topic.FindTopicById)
+	topicGroup.PUT("/:id", topic.UpdateTopic)
+	topicGroup.DELETE("/:id", topic.DeleteTopic)
 }

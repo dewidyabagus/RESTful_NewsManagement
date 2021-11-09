@@ -28,3 +28,11 @@ func (t *TopicSpec) toInsertTopic() *Topic {
 		UpdatedAt:   time.Now(),
 	}
 }
+
+func (t *TopicSpec) toUpdateTopic() *Topic {
+	return &Topic{
+		Name:        t.Name,
+		Description: t.Description,
+		UpdatedAt:   time.Now(),
+	}
+}
