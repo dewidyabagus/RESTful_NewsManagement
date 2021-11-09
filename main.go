@@ -1,20 +1,25 @@
 package main
 
 import (
-	// Module configuration file
-	"RESTful/config"
-
-	// Migration
-	"RESTful/modules/migration"
-
-	// API
-	"RESTful/api"
-
 	"fmt"
 
 	echo "github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	// Module configuration file
+	"RESTful/config"
+
+	// Migration
+	"RESTful/modules/persistence/migration"
+
+	// API
+	"RESTful/api"
+
+	// Topic
+	topicController "RESTful/api/v1/topic"
+	topicService "RESTful/business/topic"
+	topicRepository "RESTful/modules/persistence/topic"
 )
 
 func newDatabaseConnection(config *config.AppConfig) *gorm.DB {
@@ -38,13 +43,22 @@ func main() {
 	config := config.GetAppConfig()
 
 	// Create new session database
-	_ = newDatabaseConnection(config)
+	dbConnection := newDatabaseConnection(config)
+
+	// Initiate topic repository
+	topicRepo := topicRepository.NewRepository(dbConnection)
+
+	// Initiate topic service
+	topicSvc := topicService.NewService(topicRepo)
+
+	// Initiate topic controller
+	topicHandler := topicController.NewController(topicSvc)
 
 	// Initiate echo web framework
 	e := echo.New()
 
 	// Initiate routes
-	api.RegisterRouters(e)
+	api.RegisterRouters(e, topicHandler)
 
 	// start echo
 	e.Start(":8000")
