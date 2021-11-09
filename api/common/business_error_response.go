@@ -38,13 +38,15 @@ func NewBusinessErrorResponse(err error) (int, *BusinessErrorResponseSpec) {
 	case gorm.ErrRecordNotFound:
 		return errResponseDataNotFound()
 
+	case business.ErrDataNotFound:
+		return errResponseDataNotFound()
 	}
 }
 
 func errResponseInternalServerError() (int, *BusinessErrorResponseSpec) {
 	return http.StatusInternalServerError, &BusinessErrorResponseSpec{
 		Code:    ErrInternalServer,
-		Message: "Internal Server Error",
+		Message: "internal server error",
 	}
 }
 
@@ -72,6 +74,6 @@ func errResponseUnauthorized(message string) (int, *BusinessErrorResponseSpec) {
 func errResponseDataNotFound() (int, *BusinessErrorResponseSpec) {
 	return http.StatusNotFound, &BusinessErrorResponseSpec{
 		Code:    ErrDataNotFound,
-		Message: "Data Not Found",
+		Message: "data not found",
 	}
 }

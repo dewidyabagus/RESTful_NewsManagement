@@ -14,6 +14,6 @@ type ControllerErrorResponseSpec struct {
 func BadRequestResponse() (int, *ControllerErrorResponseSpec) {
 	return http.StatusBadRequest, &ControllerErrorResponseSpec{
 		Code:    ErrBadRequest,
-		Message: "Bad Request",
+		Message: "bad request",
 	}
 }
