@@ -1,15 +1,17 @@
 package api
 
 import (
-	"net/http"
-
 	echo "github.com/labstack/echo/v4"
+
+	"RESTful/api/v1/topic"
 )
 
-func RegisterRouters(e *echo.Echo) {
-	e.GET("", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, echo.Map{
-			"message": "service up",
-		})
-	})
+func RegisterRouters(e *echo.Echo, topic *topic.Controller) {
+	if topic == nil {
+		panic("route parameter initialization failed")
+	}
+
+	topicGroup := e.Group("/v1/topics")
+	topicGroup.POST("", topic.InsertTopic)
+	topicGroup.GET("", topic.FindAllTopic)
 }
