@@ -40,6 +40,9 @@ func NewBusinessErrorResponse(err error) (int, *BusinessErrorResponseSpec) {
 
 	case business.ErrDataNotFound:
 		return errResponseDataNotFound()
+
+	case business.ErrBadRequest:
+		return errResponseBadRequest(err.Error())
 	}
 }
 
@@ -75,5 +78,12 @@ func errResponseDataNotFound() (int, *BusinessErrorResponseSpec) {
 	return http.StatusNotFound, &BusinessErrorResponseSpec{
 		Code:    ErrDataNotFound,
 		Message: "data not found",
+	}
+}
+
+func errResponseBadRequest(message string) (int, *BusinessErrorResponseSpec) {
+	return http.StatusBadRequest, &BusinessErrorResponseSpec{
+		Code:    ErrBadRequest,
+		Message: message,
 	}
 }
