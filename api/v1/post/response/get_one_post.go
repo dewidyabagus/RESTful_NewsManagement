@@ -28,3 +28,29 @@ func GetOnePostSummary(p *post.Post) *PostSummary {
 		UpdatedAt:   p.UpdatedAt,
 	}
 }
+
+type PostDetail struct {
+	ID          string    `json:"id"`
+	TopicName   string    `json:"topic_name"`
+	Title       string    `json:"title"`
+	Slug        string    `json:"slug"`
+	Excerpt     string    `json:"excerpt"`
+	Body        string    `json:"body"`
+	Tags        []string  `json:"tags"`
+	PublishedAt time.Time `json:"published_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+func GetOnePostDetail(p *post.Post) *PostDetail {
+	return &PostDetail{
+		ID:          p.ID,
+		TopicName:   p.TopicName,
+		Title:       p.Title,
+		Slug:        p.Slug,
+		Excerpt:     p.Excerpt,
+		Body:        p.Body,
+		Tags:        p.Tags,
+		PublishedAt: p.PublishedAt,
+		UpdatedAt:   p.UpdatedAt,
+	}
+}

@@ -40,3 +40,14 @@ func (c *Controller) FindAllPost(ctx echo.Context) error {
 
 	return ctx.JSON(common.SuccessResponseWithData(response.GetAllPostSummary(posts)))
 }
+
+func (c *Controller) FindPostBySlug(ctx echo.Context) error {
+	slug := ctx.Param("slug")
+
+	post, err := c.service.FindPostBySlug(&slug)
+	if err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithData(response.GetOnePostDetail(post)))
+}

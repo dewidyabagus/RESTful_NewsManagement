@@ -3,6 +3,7 @@ package post
 import (
 	"RESTful/business"
 	"RESTful/utils/validator"
+	"strings"
 )
 
 type service struct {
@@ -32,4 +33,16 @@ func (s *service) InsertPost(post *PostSpec) error {
 
 func (s *service) FindAllPost() (*[]Post, error) {
 	return s.repository.FindAllPost()
+}
+
+func (s *service) FindPostBySlug(slug *string) (*Post, error) {
+	if strings.TrimSpace(*slug) == "" {
+		return nil, business.ErrBadRequest
+	}
+
+	return s.repository.FindPostBySlug(slug)
+}
+
+func (s *service) FindPostByTopicId(topicId *string) (*[]Post, error) {
+	return s.repository.FindPostByTopicId(topicId)
 }
