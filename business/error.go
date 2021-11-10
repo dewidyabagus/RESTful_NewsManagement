@@ -10,4 +10,6 @@ var (
 	ErrUnauthorized = errors.New("unauthorized")
 
 	ErrDataNotFound = errors.New("data not found")
+
+	ErrBadRequest = errors.New("bad request")
 )
