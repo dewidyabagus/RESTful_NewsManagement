@@ -31,8 +31,14 @@ func (s *service) InsertPost(post *PostSpec) error {
 	return s.repository.InsertPost(post.toInsertPost())
 }
 
-func (s *service) FindAllPost() (*[]Post, error) {
-	return s.repository.FindAllPost()
+func (s *service) FindAllPost(status *string) (*[]Post, error) {
+	*status = strings.ToLower(*status)
+
+	if *status != "draft" && *status != "deleted" && *status != "publish" && *status != "" {
+		return nil, business.ErrBadRequest
+	}
+
+	return s.repository.FindAllPost(status)
 }
 
 func (s *service) FindPostBySlug(slug *string) (*Post, error) {

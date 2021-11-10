@@ -33,7 +33,9 @@ func (c *Controller) InsertPost(ctx echo.Context) error {
 }
 
 func (c *Controller) FindAllPost(ctx echo.Context) error {
-	posts, err := c.service.FindAllPost()
+	status := ctx.QueryParam("status")
+
+	posts, err := c.service.FindAllPost(&status)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}

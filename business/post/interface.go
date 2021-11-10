@@ -7,7 +7,7 @@ type Service interface {
 
 	FindPostByTopicId(topicId *string) (*[]Post, error)
 
-	FindAllPost() (*[]Post, error)
+	FindAllPost(status *string) (*[]Post, error)
 }
 
 type Repository interface {
@@ -17,5 +17,5 @@ type Repository interface {
 
 	FindPostByTopicId(topicId *string) (*[]Post, error)
 
-	FindAllPost() (*[]Post, error)
+	FindAllPost(status *string) (*[]Post, error)
 }

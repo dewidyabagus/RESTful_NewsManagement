@@ -109,13 +109,24 @@ func (r *Repository) FindPostByTopicId(topicId *string) (*[]post.Post, error) {
 	return toAllBusinessPost(posts), nil
 }
 
-func (r *Repository) FindAllPost() (*[]post.Post, error) {
+func (r *Repository) FindAllPost(status *string) (*[]post.Post, error) {
 	var posts = new([]Post)
 
-	err := r.DB.Preload("Topic").
-		Where("(to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null)").
-		Order("created_at asc").Find(posts).Error
-	if err != nil {
+	rs := r.DB.Preload("Topic")
+	if *status == "deleted" {
+		rs.Where("to_char(deleted_at, 'YYYY') != '0001'")
+
+	} else {
+		rs.Where("(to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null)")
+
+		if *status == "publish" {
+			rs.Where("(to_char(published_at, 'YYYY') != '0001')")
+		} else {
+			rs.Where("(to_char(published_at, 'YYYY') = '0001') or published_at is null")
+		}
+	}
+
+	if err := rs.Find(posts).Error; err != nil {
 		return nil, err
 	}
 
