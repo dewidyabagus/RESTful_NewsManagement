@@ -43,6 +43,10 @@ func NewBusinessErrorResponse(err error) (int, *BusinessErrorResponseSpec) {
 
 	case business.ErrBadRequest:
 		return errResponseBadRequest(err.Error())
+
+	case business.ErrHasBeenPublished:
+		return errResponseBadRequest(err.Error())
+
 	}
 }
 

@@ -12,4 +12,6 @@ var (
 	ErrDataNotFound = errors.New("data not found")
 
 	ErrBadRequest = errors.New("bad request")
+
+	ErrHasBeenPublished = errors.New("has been published")
 )
