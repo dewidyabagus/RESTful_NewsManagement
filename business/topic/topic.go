@@ -1,6 +1,7 @@
 package topic
 
 import (
+	"RESTful/business/post"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,6 +13,14 @@ type Topic struct {
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+type TopicWithPosts struct {
+	ID          string
+	Name        string
+	Description string
+	UpdatedAt   time.Time
+	Posts       *[]post.Post
 }
 
 type TopicSpec struct {
@@ -34,5 +43,15 @@ func (t *TopicSpec) toUpdateTopic() *Topic {
 		Name:        t.Name,
 		Description: t.Description,
 		UpdatedAt:   time.Now(),
+	}
+}
+
+func GetTopicWithAllPosts(t *Topic, posts *[]post.Post) *TopicWithPosts {
+	return &TopicWithPosts{
+		ID:          t.ID,
+		Name:        t.Name,
+		Description: t.Description,
+		UpdatedAt:   t.UpdatedAt,
+		Posts:       posts,
 	}
 }

@@ -56,6 +56,17 @@ func (c *Controller) FindTopicById(ctx echo.Context) error {
 	return ctx.JSON(common.SuccessResponseWithData(response.GetOneTopic(topic)))
 }
 
+func (c *Controller) FindTopicByNameWithAllPosts(ctx echo.Context) error {
+	name := ctx.Param("name")
+
+	topic, err := c.service.FindTopicByNameWithAllPosts(&name)
+	if err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithData(response.GetTopicWithAllPosts(topic)))
+}
+
 func (c *Controller) UpdateTopic(ctx echo.Context) error {
 	id := ctx.Param("id")
 

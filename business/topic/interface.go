@@ -9,6 +9,9 @@ type Service interface {
 	// Find topic by id (uuid)
 	FindTopicById(id *string) (*Topic, error)
 
+	// Find topic and all post
+	FindTopicByNameWithAllPosts(name *string) (*TopicWithPosts, error)
+
 	// Find all topic
 	FindAllTopic() (*[]Topic, error)
 

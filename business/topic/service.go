@@ -1,17 +1,21 @@
 package topic
 
 import (
-	"RESTful/business"
-	"RESTful/utils/validator"
+	"strings"
 	"time"
+
+	"RESTful/business"
+	"RESTful/business/post"
+	"RESTful/utils/validator"
 )
 
 type service struct {
 	repository Repository
+	post       post.Service
 }
 
-func NewService(repository Repository) Service {
-	return &service{repository}
+func NewService(repository Repository, post post.Service) Service {
+	return &service{repository, post}
 }
 
 func (s *service) InsertTopic(topic *TopicSpec) error {
@@ -34,6 +38,24 @@ func (s *service) InsertTopic(topic *TopicSpec) error {
 
 func (s *service) FindTopicById(id *string) (*Topic, error) {
 	return s.repository.FindTopicById(id)
+}
+
+func (s *service) FindTopicByNameWithAllPosts(name *string) (*TopicWithPosts, error) {
+	if strings.TrimSpace(*name) == "" {
+		return nil, business.ErrBadRequest
+	}
+
+	result, err := s.repository.FindTopicByName(name)
+	if err != nil {
+		return nil, err
+	}
+
+	posts, err := s.post.FindPostByTopicId(&result.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetTopicWithAllPosts(result, posts), nil
 }
 
 func (s *service) FindAllTopic() (*[]Topic, error) {
