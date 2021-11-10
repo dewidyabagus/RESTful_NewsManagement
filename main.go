@@ -53,12 +53,6 @@ func main() {
 	// Initiate topic repository
 	topicRepo := topicRepository.NewRepository(dbConnection)
 
-	// Initiate topic service
-	topicSvc := topicService.NewService(topicRepo)
-
-	// Initiate topic controller
-	topicHandler := topicController.NewController(topicSvc)
-
 	// Initiate post repository
 	postRepo := postRepository.NewRepository(dbConnection)
 
@@ -68,6 +62,12 @@ func main() {
 	// Initiate post controller
 	postHandler := postController.NewController(postSvc)
 
+	// Initiate topic service
+	topicSvc := topicService.NewService(topicRepo, postSvc)
+
+	// Initiate topic controller
+	topicHandler := topicController.NewController(topicSvc)
+
 	// Initiate echo web framework
 	e := echo.New()
 
@@ -75,5 +75,5 @@ func main() {
 	api.RegisterRouters(e, topicHandler, postHandler)
 
 	// start echo
-	e.Start(":8000")
+	e.Start(fmt.Sprintf("%s:%d", config.AppHost, config.AppPort))
 }
