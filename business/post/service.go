@@ -71,3 +71,15 @@ func (s *service) PublishPost(id *string) error {
 
 	return s.repository.PublishPost(id, time.Now())
 }
+
+func (s *service) UpdatePost(id *string, post *PostSpec) error {
+	if err := validator.GetValidator().Struct(post); err != nil {
+		return business.ErrDataNotSpec
+	}
+
+	if _, err := s.repository.FindPostById(id); err != nil {
+		return err
+	}
+
+	return s.repository.UpdatePost(id, post.toUpdatePost())
+}

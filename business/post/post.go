@@ -44,3 +44,15 @@ func (p *PostSpec) toInsertPost() *Post {
 		UpdatedAt: time.Now(),
 	}
 }
+
+func (p *PostSpec) toUpdatePost() *Post {
+	return &Post{
+		TopicId:   p.TopicId,
+		Title:     p.Title,
+		Slug:      p.Slug,
+		Excerpt:   p.Excerpt,
+		Body:      p.Body,
+		Tags:      p.Tags,
+		UpdatedAt: time.Now(),
+	}
+}

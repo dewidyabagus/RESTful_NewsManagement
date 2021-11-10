@@ -15,7 +15,7 @@ type Service interface {
 
 	PublishPost(id *string) error
 
-	// UpdatePost(id *string, post *PostSpec) error
+	UpdatePost(id *string, post *PostSpec) error
 
 	// DeletePost(id *string) error
 }
@@ -33,7 +33,7 @@ type Repository interface {
 
 	PublishPost(id *string, published time.Time) error
 
-	// UpdatePost(id *string, post *Post) error
+	UpdatePost(id *string, post *Post) error
 
 	// DeletePost(id *string) error
 }

@@ -155,3 +155,21 @@ func (r *Repository) PublishPost(id *string, published time.Time) error {
 
 	return r.DB.Model(result).Updates(Post{Published: true, PublishedAt: published}).Error
 }
+
+func (r *Repository) UpdatePost(id *string, p *post.Post) error {
+	var result = new(Post)
+
+	if err := r.DB.First(result, "id = ?", id).Error; err != nil {
+		return err
+	}
+
+	return r.DB.Model(result).Updates(Post{
+		TopicID:   p.TopicId,
+		Title:     p.Title,
+		Slug:      p.Slug,
+		Excerpt:   p.Excerpt,
+		Body:      p.Body,
+		Tags:      p.Tags,
+		UpdatedAt: p.UpdatedAt,
+	}).Error
+}
