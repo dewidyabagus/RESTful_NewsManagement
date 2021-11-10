@@ -6,6 +6,7 @@ import (
 	"RESTful/api/v1/post/response"
 	"RESTful/business/post"
 
+	"github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
 )
 
@@ -18,13 +19,13 @@ func NewController(service post.Service) *Controller {
 }
 
 func (c *Controller) InsertPost(ctx echo.Context) error {
-	var post = new(request.Post)
+	var postNews = new(request.Post)
 
-	if err := ctx.Bind(post); err != nil {
+	if err := ctx.Bind(postNews); err != nil {
 		return ctx.JSON(common.BadRequestResponse())
 	}
 
-	err := c.service.InsertPost(post.ToBusinessPostSpec())
+	err := c.service.InsertPost(postNews.ToBusinessPostSpec())
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
@@ -46,10 +47,37 @@ func (c *Controller) FindAllPost(ctx echo.Context) error {
 func (c *Controller) FindPostBySlug(ctx echo.Context) error {
 	slug := ctx.Param("slug")
 
-	post, err := c.service.FindPostBySlug(&slug)
+	postNews, err := c.service.FindPostBySlug(&slug)
 	if err != nil {
 		return ctx.JSON(common.NewBusinessErrorResponse(err))
 	}
 
-	return ctx.JSON(common.SuccessResponseWithData(response.GetOnePostDetail(post)))
+	return ctx.JSON(common.SuccessResponseWithData(response.GetOnePostDetail(postNews)))
+}
+
+func (c *Controller) FindPostById(ctx echo.Context) error {
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	postNews, err := c.service.FindPostById(&id)
+	if err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithData(response.GetOnePostDetail(postNews)))
+}
+
+func (c *Controller) PublishPost(ctx echo.Context) error {
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if err := c.service.PublishPost(&id); err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithoutData())
 }

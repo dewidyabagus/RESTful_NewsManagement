@@ -23,6 +23,7 @@ type Post struct {
 	Excerpt     string         `gorm:"excerpt;type:text;not null"`
 	Body        string         `gorm:"body;type:text;not null"`
 	Tags        pq.StringArray `gorm:"tags;type:varchar(30)[]"`
+	Published   bool           `gorm:"published;type:boolean;default:false"`
 	PublishedAt time.Time      `gorm:"published_at;type:timestamp;not null"`
 	CreatedAt   time.Time      `gorm:"created_at;type:timestamp;not null"`
 	UpdatedAt   time.Time      `gorm:"updated_at;type:timestamp;not null"`
@@ -40,6 +41,7 @@ func (p *Post) toBusinessPost() *post.Post {
 		Excerpt:         p.Excerpt,
 		Body:            p.Body,
 		Tags:            p.Tags,
+		Published:       p.Published,
 		PublishedAt:     p.PublishedAt,
 		CreatedAt:       p.CreatedAt,
 		UpdatedAt:       p.UpdatedAt,
@@ -96,6 +98,17 @@ func (r *Repository) FindPostBySlug(slug *string) (*post.Post, error) {
 	return post.toBusinessPost(), nil
 }
 
+func (r *Repository) FindPostById(id *string) (*post.Post, error) {
+	var result = new(Post)
+
+	err := r.DB.First(result, "(to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null) and id = ?", id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return result.toBusinessPost(), nil
+}
+
 func (r *Repository) FindPostByTopicId(topicId *string) (*[]post.Post, error) {
 	var posts = new([]Post)
 
@@ -120,9 +133,9 @@ func (r *Repository) FindAllPost(status *string) (*[]post.Post, error) {
 		rs.Where("(to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null)")
 
 		if *status == "publish" {
-			rs.Where("(to_char(published_at, 'YYYY') != '0001')")
+			rs.Where("published = true") // data has been published
 		} else {
-			rs.Where("(to_char(published_at, 'YYYY') = '0001') or published_at is null")
+			rs.Where("published = false") // data draft
 		}
 	}
 
@@ -131,4 +144,14 @@ func (r *Repository) FindAllPost(status *string) (*[]post.Post, error) {
 	}
 
 	return toAllBusinessPost(posts), nil
+}
+
+func (r *Repository) PublishPost(id *string, published time.Time) error {
+	var result = new(Post)
+
+	if err := r.DB.First(result, "id = ?", id).Error; err != nil {
+		return err
+	}
+
+	return r.DB.Model(result).Updates(Post{Published: true, PublishedAt: published}).Error
 }

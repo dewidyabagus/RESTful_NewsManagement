@@ -4,6 +4,7 @@ import (
 	"RESTful/business"
 	"RESTful/utils/validator"
 	"strings"
+	"time"
 )
 
 type service struct {
@@ -49,6 +50,24 @@ func (s *service) FindPostBySlug(slug *string) (*Post, error) {
 	return s.repository.FindPostBySlug(slug)
 }
 
+func (s *service) FindPostById(id *string) (*Post, error) {
+	return s.repository.FindPostById(id)
+}
+
 func (s *service) FindPostByTopicId(topicId *string) (*[]Post, error) {
 	return s.repository.FindPostByTopicId(topicId)
+}
+
+func (s *service) PublishPost(id *string) error {
+	postNews, err := s.repository.FindPostById(id)
+
+	if err != nil {
+		return err
+
+	} else if postNews.Published {
+		return business.ErrHasBeenPublished
+
+	}
+
+	return s.repository.PublishPost(id, time.Now())
 }

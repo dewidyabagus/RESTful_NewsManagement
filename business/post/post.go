@@ -16,6 +16,7 @@ type Post struct {
 	Excerpt         string
 	Body            string
 	Tags            []string
+	Published       bool
 	PublishedAt     time.Time
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
