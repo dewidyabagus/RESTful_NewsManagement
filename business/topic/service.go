@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"RESTful/business"
+	topicCache "RESTful/business/cache/topic"
 	"RESTful/business/post"
 	"RESTful/utils/validator"
 )
@@ -12,10 +13,11 @@ import (
 type service struct {
 	repository Repository
 	post       post.Service
+	cache      topicCache.Service
 }
 
-func NewService(repository Repository, post post.Service) Service {
-	return &service{repository, post}
+func NewService(repository Repository, post post.Service, topic topicCache.Service) Service {
+	return &service{repository, post, topic}
 }
 
 func (s *service) InsertTopic(topic *TopicSpec) error {
@@ -37,7 +39,25 @@ func (s *service) InsertTopic(topic *TopicSpec) error {
 }
 
 func (s *service) FindTopicById(id *string) (*Topic, error) {
-	return s.repository.FindTopicById(id)
+	resultCache, err := s.cache.GetTopicById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if resultCache != nil {
+		return cacheToTopic(resultCache), nil
+	}
+
+	resultTopic, err := s.repository.FindTopicById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.cache.SetNewTopic(toCacheTopic(resultTopic)); err != nil {
+		return nil, err
+	}
+
+	return resultTopic, nil
 }
 
 func (s *service) FindTopicByNameWithAllPosts(name *string) (*TopicWithPosts, error) {
@@ -80,11 +100,19 @@ func (s *service) UpdateTopic(id *string, topic *TopicSpec) error {
 		return err
 	}
 
+	if err := s.cache.DeleteTopic(id); err != nil {
+		return err
+	}
+
 	return s.repository.UpdateTopic(id, topic.toUpdateTopic())
 }
 
 func (s *service) DeleteTopic(id *string) error {
 	if _, err := s.repository.FindTopicById(id); err != nil {
+		return err
+	}
+
+	if err := s.cache.DeleteTopic(id); err != nil {
 		return err
 	}
 

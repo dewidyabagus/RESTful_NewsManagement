@@ -1,10 +1,12 @@
 package topic
 
 import (
-	"RESTful/business/post"
 	"time"
 
 	"github.com/google/uuid"
+
+	topicCache "RESTful/business/cache/topic"
+	"RESTful/business/post"
 )
 
 type Topic struct {
@@ -53,5 +55,25 @@ func GetTopicWithAllPosts(t *Topic, posts *[]post.Post) *TopicWithPosts {
 		Description: t.Description,
 		UpdatedAt:   t.UpdatedAt,
 		Posts:       posts,
+	}
+}
+
+func cacheToTopic(t *topicCache.CacheTopic) *Topic {
+	return &Topic{
+		ID:          t.ID,
+		Name:        t.Name,
+		Description: t.Description,
+		CreatedAt:   t.CreatedAt,
+		UpdatedAt:   t.UpdatedAt,
+	}
+}
+
+func toCacheTopic(t *Topic) *topicCache.CacheTopic {
+	return &topicCache.CacheTopic{
+		ID:          t.ID,
+		Name:        t.Name,
+		Description: t.Description,
+		CreatedAt:   t.CreatedAt,
+		UpdatedAt:   t.UpdatedAt,
 	}
 }
