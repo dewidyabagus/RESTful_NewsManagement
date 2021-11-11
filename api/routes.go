@@ -24,6 +24,9 @@ func RegisterRouters(e *echo.Echo, topic *topic.Controller, post *post.Controlle
 	postGroup.GET("", post.FindAllPost)
 	postGroup.GET("/:id", post.FindPostById)
 	postGroup.PUT("/:id/publish", post.PublishPost)
+	postGroup.PUT("/:id", post.UpdatePost)
+	postGroup.DELETE("/:id", post.DeletePost)
+
 	postGroup.GET("/news/:slug", post.FindPostBySlug)
 	postGroup.GET("/topics/:name", topic.FindTopicByNameWithAllPosts)
 }

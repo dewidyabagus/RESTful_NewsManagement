@@ -101,7 +101,7 @@ func (r *Repository) FindPostBySlug(slug *string) (*post.Post, error) {
 func (r *Repository) FindPostById(id *string) (*post.Post, error) {
 	var result = new(Post)
 
-	err := r.DB.First(result, "(to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null) and id = ?", id).Error
+	err := r.DB.Preload("Topic").First(result, "(to_char(deleted_at, 'YYYY') = '0001' or deleted_at is null) and id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func (r *Repository) FindAllPost(status *string) (*[]post.Post, error) {
 
 		if *status == "publish" {
 			rs.Where("published = true") // data has been published
-		} else {
+		} else if *status == "draft" {
 			rs.Where("published = false") // data draft
 		}
 	}
@@ -172,4 +172,13 @@ func (r *Repository) UpdatePost(id *string, p *post.Post) error {
 		Tags:      p.Tags,
 		UpdatedAt: p.UpdatedAt,
 	}).Error
+}
+
+func (r *Repository) DeletePost(id *string, deleter time.Time) error {
+	var result = new(Post)
+	if err := r.DB.First(result, "id = ?", id).Error; err != nil {
+		return err
+	}
+
+	return r.DB.Model(result).Updates(Post{DeletedAt: deleter}).Error
 }

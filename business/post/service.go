@@ -83,3 +83,11 @@ func (s *service) UpdatePost(id *string, post *PostSpec) error {
 
 	return s.repository.UpdatePost(id, post.toUpdatePost())
 }
+
+func (s *service) DeletePost(id *string) error {
+	if _, err := s.repository.FindPostById(id); err != nil {
+		return err
+	}
+
+	return s.repository.DeletePost(id, time.Now())
+}

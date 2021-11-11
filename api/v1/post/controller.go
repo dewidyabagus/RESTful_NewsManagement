@@ -81,3 +81,34 @@ func (c *Controller) PublishPost(ctx echo.Context) error {
 
 	return ctx.JSON(common.SuccessResponseWithoutData())
 }
+
+func (c *Controller) UpdatePost(ctx echo.Context) error {
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	var postNews = new(request.Post)
+	if err := ctx.Bind(postNews); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if err := c.service.UpdatePost(&id, postNews.ToBusinessPostSpec()); err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithoutData())
+}
+
+func (c *Controller) DeletePost(ctx echo.Context) error {
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
+		return ctx.JSON(common.BadRequestResponse())
+	}
+
+	if err := c.service.DeletePost(&id); err != nil {
+		return ctx.JSON(common.NewBusinessErrorResponse(err))
+	}
+
+	return ctx.JSON(common.SuccessResponseWithoutData())
+}
