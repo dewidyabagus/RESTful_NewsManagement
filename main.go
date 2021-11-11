@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/go-redis/redis"
 	echo "github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -20,6 +21,10 @@ import (
 	topicController "RESTful/api/v1/topic"
 	topicService "RESTful/business/topic"
 	topicRepository "RESTful/modules/persistence/topic"
+
+	// Topic Caching
+	topicServiceCache "RESTful/business/cache/topic"
+	topicRepoCache "RESTful/modules/cache/topic"
 
 	// Post
 	postController "RESTful/api/v1/post"
@@ -43,6 +48,20 @@ func newDatabaseConnection(config *config.AppConfig) *gorm.DB {
 	return db
 }
 
+func newRedisConnection(config *config.AppConfig) *redis.Client {
+	rdClient := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", config.RedisHost, config.RedisPort),
+		Password: config.RedisPassword,
+		DB:       0,
+	})
+
+	if _, err := rdClient.Ping().Result(); err != nil {
+		panic(err)
+	}
+
+	return rdClient
+}
+
 func main() {
 	// Get configuration file
 	config := config.GetAppConfig()
@@ -50,8 +69,17 @@ func main() {
 	// Create new session database
 	dbConnection := newDatabaseConnection(config)
 
+	// Create ne session redis
+	rdClient := newRedisConnection(config)
+
+	// Initiate topic repository redis
+	topicRCache := topicRepoCache.NewRepository(rdClient)
+
 	// Initiate topic repository
 	topicRepo := topicRepository.NewRepository(dbConnection)
+
+	// Initiate topic service cache
+	topicSCache := topicServiceCache.NewService(topicRCache)
 
 	// Initiate post repository
 	postRepo := postRepository.NewRepository(dbConnection)
@@ -63,7 +91,7 @@ func main() {
 	postHandler := postController.NewController(postSvc)
 
 	// Initiate topic service
-	topicSvc := topicService.NewService(topicRepo, postSvc)
+	topicSvc := topicService.NewService(topicRepo, postSvc, topicSCache)
 
 	// Initiate topic controller
 	topicHandler := topicController.NewController(topicSvc)

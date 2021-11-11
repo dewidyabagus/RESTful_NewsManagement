@@ -8,13 +8,16 @@ import (
 )
 
 type AppConfig struct {
-	AppHost    string `mapstructure:"app_host"`
-	AppPort    int16  `mapstructure:"app_port"`
-	PgHost     string `mapstructure:"pg_host"`
-	PgUsername string `mapstructure:"pg_username"`
-	PgPassword string `mapstructure:"pg_password"`
-	PgDbname   string `mapstructure:"pg_dbname"`
-	PgPort     int16  `mapstructure:"pg_port"`
+	AppHost       string `mapstructure:"app_host"`
+	AppPort       int16  `mapstructure:"app_port"`
+	PgHost        string `mapstructure:"pg_host"`
+	PgUsername    string `mapstructure:"pg_username"`
+	PgPassword    string `mapstructure:"pg_password"`
+	PgDbname      string `mapstructure:"pg_dbname"`
+	PgPort        int16  `mapstructure:"pg_port"`
+	RedisHost     string `mapstructure:"redis_host"`
+	RedisPort     int16  `mapstructure:"redis_port"`
+	RedisPassword string `mapstructure:"redis_password"`
 }
 
 type AppSecretKey struct {
@@ -32,6 +35,9 @@ func GetAppConfig() *AppConfig {
 	defaConfig.PgPassword = ""
 	defaConfig.PgDbname = "postgres"
 	defaConfig.PgPort = 5432
+	defaConfig.RedisHost = "localhost"
+	defaConfig.RedisPort = 6379
+	defaConfig.RedisPassword = ""
 
 	// Fetch configuration file
 	viper.SetConfigFile(".env")
