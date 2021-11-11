@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: pgsql-news
+    image: postgres:10-alpine
+    ports:
+      - 65432:5432
+    environment:
+      - POSTGRES_USER=pgusertest
+      - POSTGRES_PASSWORD=pgpasswordtest
+      - POSTGRES_DB=newsdb
+    networks: 
+      - db_network
+    restart: on-failure
+
+  dbcache:
+    container_name: redis-news
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass rdyourpassword
+    networks: 
+      - db_network
+    restart: on-failure
+
+networks:
+  db_network:
+    name: db_network
+
