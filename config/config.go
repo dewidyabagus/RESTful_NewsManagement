@@ -14,9 +14,9 @@ type AppConfig struct {
 	PgUsername    string `mapstructure:"pg_username"`
 	PgPassword    string `mapstructure:"pg_password"`
 	PgDbname      string `mapstructure:"pg_dbname"`
-	PgPort        int16  `mapstructure:"pg_port"`
+	PgPort        int32  `mapstructure:"pg_port"`
 	RedisHost     string `mapstructure:"redis_host"`
-	RedisPort     int16  `mapstructure:"redis_port"`
+	RedisPort     int32  `mapstructure:"redis_port"`
 	RedisPassword string `mapstructure:"redis_password"`
 }
 
