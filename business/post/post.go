@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
+	"RESTful/business/cache/post"
 )
 
 type Post struct {
@@ -54,5 +56,41 @@ func (p *PostSpec) toUpdatePost() *Post {
 		Body:      p.Body,
 		Tags:      p.Tags,
 		UpdatedAt: time.Now(),
+	}
+}
+
+func postCacheToPost(p *post.CachePost) *Post {
+	return &Post{
+		ID:              p.ID,
+		TopicId:         p.TopicId,
+		TopicName:       p.TopicName,
+		TopicDesciption: p.TopicDesciption,
+		Title:           p.Title,
+		Slug:            p.Slug,
+		Excerpt:         p.Excerpt,
+		Body:            p.Body,
+		Tags:            p.Tags,
+		Published:       p.Published,
+		PublishedAt:     p.PublishedAt,
+		CreatedAt:       p.CreatedAt,
+		UpdatedAt:       p.UpdatedAt,
+	}
+}
+
+func toCachePost(p *Post) *post.CachePost {
+	return &post.CachePost{
+		ID:              p.ID,
+		TopicId:         p.TopicId,
+		TopicName:       p.TopicName,
+		TopicDesciption: p.TopicDesciption,
+		Title:           p.Title,
+		Slug:            p.Slug,
+		Excerpt:         p.Excerpt,
+		Body:            p.Body,
+		Tags:            p.Tags,
+		Published:       p.Published,
+		PublishedAt:     p.PublishedAt,
+		CreatedAt:       p.CreatedAt,
+		UpdatedAt:       p.UpdatedAt,
 	}
 }

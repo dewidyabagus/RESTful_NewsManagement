@@ -1,18 +1,21 @@
 package post
 
 import (
-	"RESTful/business"
-	"RESTful/utils/validator"
 	"strings"
 	"time"
+
+	"RESTful/business"
+	cachePost "RESTful/business/cache/post"
+	"RESTful/utils/validator"
 )
 
 type service struct {
 	repository Repository
+	cache      cachePost.Service
 }
 
-func NewService(repository Repository) Service {
-	return &service{repository}
+func NewService(repository Repository, cache cachePost.Service) Service {
+	return &service{repository, cache}
 }
 
 func (s *service) InsertPost(post *PostSpec) error {
@@ -47,11 +50,47 @@ func (s *service) FindPostBySlug(slug *string) (*Post, error) {
 		return nil, business.ErrBadRequest
 	}
 
-	return s.repository.FindPostBySlug(slug)
+	cachePostBySlug, err := s.cache.GetPostBySlug(slug)
+	if err != nil {
+		return nil, err
+	}
+
+	if cachePostBySlug != nil {
+		return postCacheToPost(cachePostBySlug), nil
+	}
+
+	newsPost, err := s.repository.FindPostBySlug(slug)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.cache.SetNewPost(toCachePost(newsPost)); err != nil {
+		return nil, err
+	}
+
+	return newsPost, nil
 }
 
 func (s *service) FindPostById(id *string) (*Post, error) {
-	return s.repository.FindPostById(id)
+	cacheNewsPost, err := s.cache.GetPostById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if cacheNewsPost != nil {
+		return postCacheToPost(cacheNewsPost), err
+	}
+
+	newsPost, err := s.repository.FindPostById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.cache.SetNewPost(toCachePost(newsPost)); err != nil {
+		return nil, err
+	}
+
+	return newsPost, nil
 }
 
 func (s *service) FindPostByTopicId(topicId *string) (*[]Post, error) {
@@ -59,7 +98,7 @@ func (s *service) FindPostByTopicId(topicId *string) (*[]Post, error) {
 }
 
 func (s *service) PublishPost(id *string) error {
-	postNews, err := s.repository.FindPostById(id)
+	postNews, err := s.FindPostById(id)
 
 	if err != nil {
 		return err
@@ -67,6 +106,10 @@ func (s *service) PublishPost(id *string) error {
 	} else if postNews.Published {
 		return business.ErrHasBeenPublished
 
+	}
+
+	if err := s.cache.DeletePost(id); err != nil {
+		return err
 	}
 
 	return s.repository.PublishPost(id, time.Now())
@@ -81,11 +124,19 @@ func (s *service) UpdatePost(id *string, post *PostSpec) error {
 		return err
 	}
 
+	if err := s.cache.DeletePost(id); err != nil {
+		return err
+	}
+
 	return s.repository.UpdatePost(id, post.toUpdatePost())
 }
 
 func (s *service) DeletePost(id *string) error {
 	if _, err := s.repository.FindPostById(id); err != nil {
+		return err
+	}
+
+	if err := s.cache.DeletePost(id); err != nil {
 		return err
 	}
 

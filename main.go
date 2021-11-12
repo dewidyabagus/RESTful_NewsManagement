@@ -30,6 +30,10 @@ import (
 	postController "RESTful/api/v1/post"
 	postService "RESTful/business/post"
 	postRepository "RESTful/modules/persistence/post"
+
+	// Post Caching
+	postServiceCache "RESTful/business/cache/post"
+	postRepoCache "RESTful/modules/cache/post"
 )
 
 func newDatabaseConnection(config *config.AppConfig) *gorm.DB {
@@ -84,8 +88,14 @@ func main() {
 	// Initiate post repository
 	postRepo := postRepository.NewRepository(dbConnection)
 
+	// Initiate post cache repository
+	postRCache := postRepoCache.NewRepository(rdClient)
+
+	// Initiate post cache service
+	postSCache := postServiceCache.NewService(postRCache)
+
 	// Initiate post service
-	postSvc := postService.NewService(postRepo)
+	postSvc := postService.NewService(postRepo, postSCache)
 
 	// Initiate post controller
 	postHandler := postController.NewController(postSvc)
