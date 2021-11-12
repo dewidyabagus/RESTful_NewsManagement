@@ -1,0 +1,349 @@
+{
+	"info": {
+		"_postman_id": "42ce27f3-68ec-43c7-97c4-d7c40cc694f0",
+		"name": "News RESTful API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "API Topic",
+			"item": [
+				{
+					"name": "Insert New Topic",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Keuangan\",\n    \"description\": \"Perihal Keuangan\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/topics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find All Topic",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/topics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Topic By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/topics/183be3d9-3db1-42c6-808a-dcdb98a40099",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"topics",
+								"183be3d9-3db1-42c6-808a-dcdb98a40099"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Topic",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Investasi\",\n    \"description\": \"Perihal Investasi\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/topics/183be3d9-3db1-42c6-808a-dcdb98a40099",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"topics",
+								"183be3d9-3db1-42c6-808a-dcdb98a40099"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Topic",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/topics/0ff7add0-b80f-420c-ab96-d8720af7a440",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"topics",
+								"0ff7add0-b80f-420c-ab96-d8720af7a440"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API News",
+			"item": [
+				{
+					"name": "Find Post News",
+					"item": [
+						{
+							"name": "Find All Post News",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/posts",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"posts"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "draft",
+											"disabled": true
+										},
+										{
+											"key": "status",
+											"value": "deleted",
+											"disabled": true
+										},
+										{
+											"key": "status",
+											"value": "publish",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find All Post Nes With Topic Name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/posts/topics/Perbankan",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"posts",
+										"topics",
+										"Perbankan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Post News By Id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/posts/3286f6c4-2d9d-40ec-b339-a27c5c6df945",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"posts",
+										"3286f6c4-2d9d-40ec-b339-a27c5c6df945"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Post News By Slug",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/posts/news/investasi-aman",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"posts",
+										"news",
+										"investasi-aman"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Insert Post News",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"topic_id\": \"183be3d9-3db1-42c6-808a-dcdb98a40099\",\n    \"title\": \"Investasi Aman\",\n    \"slug\": \"investasi-aman\",\n    \"excerpt\": \"investasi aman ala-ala koboi bagian kutipan\",\n    \"body\": \"investasi aman ala-ala koboi  bagian body\",\n    \"tags\": [\"keuangan\", \"anak muda\", \"investasi\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Post News",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/posts/cd98d3f7-18f9-4463-a2c4-5963c61b0972/publish",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"posts",
+								"cd98d3f7-18f9-4463-a2c4-5963c61b0972",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post News",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"topic_id\": \"96c32cdf-497c-4fec-a267-0017de762d19\",\n    \"title\": \"Investasi Aman Edit\",\n    \"slug\": \"investasi-aman\",\n    \"excerpt\": \"investasi aman bagian kutipan Edit\",\n    \"body\": \"investasi aman bagian body Edit\",\n    \"tags\": [\"investasi\", \"keuangan\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/posts/cd98d3f7-18f9-4463-a2c4-5963c61b0972",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"posts",
+								"cd98d3f7-18f9-4463-a2c4-5963c61b0972"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post News",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/posts/cd98d3f7-18f9-4463-a2c4-5963c61b0972",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"posts",
+								"cd98d3f7-18f9-4463-a2c4-5963c61b0972"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": ""
+		}
+	]
+}
